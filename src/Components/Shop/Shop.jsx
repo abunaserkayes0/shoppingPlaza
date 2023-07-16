@@ -7,10 +7,23 @@ const Shop = () => {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
 
-  const handelAddToCart = (product) => {
-    const newCart = [...cart, product];
+  const handelAddToCart = (selectedProduct) => {
+    let newCart = [];
+    const exists = products.find(
+      (product) => product.id === selectedProduct.id
+    );
+    if (!exists) {
+      selectedProduct.quantity = 1;
+      newCart = [...cart, selectedProduct];
+    } else {
+      const rest = products.filter(
+        (product) => product.id !== selectedProduct.id
+      );
+      selectedProduct.quantity = selectedProduct.quantity + 1;
+      newCart = [...rest, exists];
+    }
     setCart(newCart);
-    addToDb(product.id);
+    addToDb(selectedProduct.id);
   };
   useEffect(() => {
     fetch("products.json")
